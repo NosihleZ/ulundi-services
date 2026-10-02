@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advertise a Special – Ulundi Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="index.html" class="logo"><span class="logo-mark">V</span><span>Ulundi<strong>Services</strong></span></a>
+    </nav>
+  </header>
+
+  <main class="form-page">
+    <div class="container">
+      <a href="index.html" class="back-link">← Back to Directory</a>
+
+      <div class="form-card">
+        <div class="form-header">
+          <h1>Advertise a Special 📣</h1>
+          <p id="specialIntro"></p>
+        </div>
+
+        <div class="form-body">
+          <div class="success-msg" id="successMsg">
+            ✅ Thanks! We'll email you an invoice shortly and switch your special live once it's paid.
+          </div>
+
+          <form id="specialForm" onsubmit="return submitSpecial(event)">
+            <input type="text" name="website_hp" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
+
+            <div class="form-group">
+              <label>Business Name <span>*</span></label>
+              <input type="text" class="form-control" id="specialBusiness" required />
+            </div>
+
+            <div class="form-group">
+              <label>Special Title <span>*</span></label>
+              <input type="text" class="form-control" id="specialTitle" placeholder="e.g. 20% Off Braids & Styling" required />
+            </div>
+
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="form-control" id="specialDesc" placeholder="Tell customers about your special…"></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Start Date</label>
+                <input type="date" class="form-control" id="specialStart" />
+              </div>
+              <div class="form-group">
+                <label>End Date</label>
+                <input type="date" class="form-control" id="specialEnd" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Placement <span>*</span></label>
+              <select class="form-control" id="specialPlacement" required>
+                <option value="banner">Homepage Banner</option>
+                <option value="popup">Popup</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Image</label>
+              <input type="file" class="form-control" id="specialImage" accept="image/*" />
+              <div class="image-preview-row" id="specialImagePreview"></div>
+            </div>
+
+            <div class="form-group">
+              <label>Link (optional)</label>
+              <input type="url" class="form-control" id="specialLink" placeholder="Where should it link to?" />
+            </div>
+
+            <div class="form-group">
+              <label>Your Contact Email <span>*</span></label>
+              <input type="email" class="form-control" id="specialEmail" required />
+            </div>
+
+            <div class="form-submit">
+              <button class="btn btn-solid btn-lg" type="submit" id="specialSubmitBtn">Submit Special →</button>
+              <span id="specialStatus" style="font-size:0.88rem;color:var(--text-muted)"></span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="request-special.js"></script>
+</body>
+</html>

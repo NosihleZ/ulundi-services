@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>List Your Business – Ulundi Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="index.html" class="logo"><span class="logo-mark">V</span><span>Ulundi<strong>Services</strong></span></a>
+    </nav>
+  </header>
+
+  <main class="form-page">
+    <div class="container">
+      <a href="index.html" class="back-link">← Back to Directory</a>
+
+      <div class="form-card">
+        <div class="form-header">
+          <h1>List Your Business 🏪</h1>
+          <p id="formIntro">Fill in your business details and we'll get you listed. We'll review and list you within 24–48 hours.</p>
+        </div>
+
+        <div class="form-body">
+          <div class="success-msg" id="successMsg">
+            ✅ Thank you! Your business has been submitted. We'll review and list it within 24–48 hours, and email you the moment it's live.
+          </div>
+
+          <form id="bizForm" onsubmit="return submitBusiness(event)">
+            <!-- honeypot -->
+            <input type="text" name="website_hp" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
+
+            <div class="form-group">
+              <label>Business Name <span>*</span></label>
+              <input type="text" class="form-control" id="bizName" placeholder="e.g. Mama Thandi's Kitchen" required />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Category <span>*</span></label>
+                <select class="form-control" id="bizCategory" required>
+                  <option value="">Select a category</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Township <span>*</span></label>
+                <select class="form-control" id="bizTownship" required>
+                  <option value="">Select a township</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Business Description <span>*</span></label>
+              <textarea class="form-control" id="bizDesc" placeholder="Tell customers what you do, what makes you special, and what products or services you offer..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Street Address <span>*</span></label>
+              <input type="text" class="form-control" id="bizAddress" placeholder="e.g. 23 Vilakazi Street, Ulundi" required />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Phone Number <span>*</span></label>
+                <input type="tel" class="form-control" id="bizPhone" placeholder="035 555 0101" required />
+              </div>
+              <div class="form-group">
+                <label>WhatsApp Number</label>
+                <input type="tel" class="form-control" id="bizWhatsApp" placeholder="27821234567" />
+                <p class="form-note">Include country code (e.g. 27 for SA)</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Operating Hours</label>
+              <input type="text" class="form-control" id="bizHours" placeholder="e.g. Mon–Sat: 08:00–18:00 | Sun: Closed" />
+            </div>
+
+            <div class="form-group">
+              <label>Google Maps Location</label>
+              <input type="url" class="form-control" id="bizMapEmbed" placeholder="Paste the Google Maps 'Embed a map' link here" />
+              <p class="form-note">On Google Maps: Share → Embed a map → copy the link (starts with https://www.google.com/maps/embed?...).</p>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Website / Link 1 <span class="form-tag">free</span></label>
+                <input type="url" class="form-control" id="bizWebsite1" placeholder="https://yoursite.co.za" />
+              </div>
+              <div class="form-group">
+                <label>Website / Link 2 <span class="form-tag">free</span></label>
+                <input type="url" class="form-control" id="bizWebsite2" placeholder="https://yourshop.co.za" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Facebook URL</label>
+                <input type="url" class="form-control" id="bizFacebook" />
+              </div>
+              <div class="form-group">
+                <label>Instagram URL</label>
+                <input type="url" class="form-control" id="bizInstagram" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>TikTok URL</label>
+                <input type="url" class="form-control" id="bizTiktok" />
+              </div>
+              <div class="form-group">
+                <label>YouTube Video URL</label>
+                <input type="url" class="form-control" id="bizYoutube" placeholder="https://youtube.com/watch?v=…" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Vimeo Video URL</label>
+              <input type="url" class="form-control" id="bizVimeo" placeholder="https://vimeo.com/…" />
+            </div>
+
+            <div class="form-group">
+              <label>Cover Photo</label>
+              <input type="file" class="form-control" id="bizFeatured" accept="image/*" />
+              <div class="image-preview-row" id="featuredPreview"></div>
+            </div>
+
+            <div class="form-group">
+              <label>Gallery Photos (up to 6)</label>
+              <input type="file" class="form-control" id="bizGallery" accept="image/*" multiple />
+              <div class="image-preview-row" id="galleryPreview"></div>
+              <p class="upload-progress" id="uploadProgress"></p>
+            </div>
+
+            <div class="form-group">
+              <label>Your Name (Owner / Contact)</label>
+              <input type="text" class="form-control" id="ownerName" placeholder="Your full name" />
+            </div>
+
+            <div class="form-group">
+              <label>Your Email Address <span>*</span></label>
+              <input type="email" class="form-control" id="ownerEmail" placeholder="you@example.com" required />
+              <p class="form-note">We'll use this to confirm your listing, let you know once it's approved and live, and to contact you about payment once the free period ends.</p>
+            </div>
+
+            <div class="declaration-box" id="declarationBox">
+              <label>
+                <input type="checkbox" id="declarationCheck" required />
+                <span id="declarationText"></span> <span>*</span>
+              </label>
+            </div>
+
+            <div class="form-submit">
+              <button class="btn btn-solid btn-lg" type="submit" id="submitBtn">Submit My Business →</button>
+              <span id="submitStatus" style="font-size:0.88rem;color:var(--text-muted)"></span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="list-business.js"></script>
+</body>
+</html>

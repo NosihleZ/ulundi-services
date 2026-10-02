@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ulundi Services — Approvals (private)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="index.html" class="logo"><span class="logo-mark">V</span><span>Ulundi<strong>Services</strong></span></a>
+    </nav>
+  </header>
+
+  <div class="admin-wrap">
+    <h1>Pending Listings</h1>
+    <p class="form-note">Not linked from the public site. Bookmark this page — log in with an <strong>Editor or Administrator</strong> WordPress account's Application Password (different from the Contributor account used for public submissions).</p>
+
+    <div class="admin-login" id="adminLogin">
+      <div class="form-group">
+        <label>WordPress Username</label>
+        <input type="text" class="form-control" id="adminUsername" />
+      </div>
+      <div class="form-group">
+        <label>Application Password</label>
+        <input type="password" class="form-control" id="adminAppPassword" placeholder="xxxx xxxx xxxx xxxx xxxx xxxx" />
+        <p class="form-note">Created in wp-admin → Users → your profile → Application Passwords. Stored only in this browser tab, never sent anywhere but your own WordPress site.</p>
+      </div>
+      <button class="btn btn-solid" onclick="adminLogin()">Log In</button>
+    </div>
+
+    <div id="adminPanel" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span class="form-note" id="pendingCount"></span>
+        <button class="btn btn-outline" style="color:var(--green);border-color:var(--green)" onclick="loadPending()">Refresh</button>
+      </div>
+      <div id="pendingList"></div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ulundi Services – Business Directory</title>
+  <meta name="description" content="Discover and support local businesses in Ulundi. Ulundi Services connects communities with trusted local traders, restaurants, services and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">V</span>
+        <span>Ulundi<strong>Services</strong></span>
+      </a>
+      <div class="nav-links">
+        <a href="#categories">Categories</a>
+        <a href="#businesses">Businesses</a>
+        <a href="#townships">Townships</a>
+        <a href="request-special.html">Advertise a Special</a>
+        <a href="list-business.html" class="btn btn-solid">List Your Business</a>
+      </div>
+      <button class="nav-burger" aria-label="Menu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#categories" onclick="toggleMenu()">Categories</a>
+      <a href="#businesses" onclick="toggleMenu()">Businesses</a>
+      <a href="#townships" onclick="toggleMenu()">Townships</a>
+      <a href="request-special.html">Advertise a Special</a>
+      <a href="list-business.html" class="btn btn-solid">List Your Business</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-badge">📍 Ulundi, KwaZulu-Natal</div>
+      <h1 class="hero-title">Find Local<br /><em>Township Businesses</em></h1>
+      <p class="hero-sub">From spaza shops to hair salons, car washes to catering — discover, support and grow the local economy right in your community.</p>
+
+      <div class="search-bar">
+        <div class="search-input-wrap">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="searchInput" placeholder="Search businesses, services..." oninput="filterBusinesses()" />
+        </div>
+        <select id="categoryFilter" onchange="filterBusinesses()">
+          <option value="">All Categories</option>
+          <!-- populated from SITE_CONFIG.CATEGORIES by app.js -->
+        </select>
+        <select id="townshipFilter" onchange="filterBusinesses()">
+          <option value="">All Townships</option>
+          <!-- populated from SITE_CONFIG.TOWNSHIPS by app.js -->
+        </select>
+        <button class="btn btn-solid" onclick="filterBusinesses()">Search</button>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num" id="totalBusinesses">—</span><span>Businesses Listed</span></div>
+        <div class="stat"><span class="stat-num" id="totalCategories">—</span><span>Categories</span></div>
+        <div class="stat"><span class="stat-num" id="totalTownships">—</span><span>Townships (growing!)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPECIALS BANNER (paid placements) -->
+  <section class="container" id="specialsBannerWrap" style="display:none">
+    <div class="ulsv-banner-carousel" id="specialsBanner"></div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="section" id="categories">
+    <div class="container">
+      <div class="section-head">
+        <h2>Browse by Category</h2>
+        <p>Tap a category to explore all businesses in that space</p>
+      </div>
+      <div class="categories-grid" id="categoriesGrid">
+        <button class="cat-card active" data-cat="" onclick="selectCategory(this, '')">
+          <span class="cat-icon">🏘️</span><span>All</span>
+        </button>
+        <!-- populated from SITE_CONFIG.CATEGORIES by app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- BUSINESSES GRID -->
+  <section class="section section-dark" id="businesses">
+    <div class="container">
+      <div class="section-head light">
+        <h2>Local Businesses</h2>
+        <p id="resultsCount">Loading businesses from the community…</p>
+      </div>
+
+      <div class="loading-grid" id="loadingGrid">
+        <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+        <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+      </div>
+
+      <div class="businesses-grid" id="businessesGrid" style="display:none"></div>
+
+      <div class="empty-state" id="emptyState" style="display:none">
+        <span>🔍</span><h3>No businesses found</h3>
+        <p>Try a different search or category — or <a href="list-business.html">list the first one!</a></p>
+      </div>
+
+      <div class="error-state" id="errorState" style="display:none">
+        <span>⚠️</span><h3>Could not load businesses</h3>
+        <p id="errorMsg">Please check your connection and try again.</p>
+        <button class="btn btn-solid" onclick="loadBusinesses()">Retry</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container cta-inner">
+      <div class="cta-text">
+        <h2>Own a local business?</h2>
+        <p>Get listed on Ulundi Services and reach thousands of people. It's quick, easy, and free to start.</p>
+        <a href="list-business.html" class="btn btn-solid btn-lg">List Your Business →</a>
+      </div>
+      <div class="cta-art"><div class="cta-blob"><span>🏪</span><span>💈</span><span>🍗</span><span>🔧</span></div></div>
+    </div>
+  </section>
+
+  <!-- TOWNSHIPS -->
+  <section class="section" id="townships">
+    <div class="container">
+      <div class="section-head">
+        <h2>Townships</h2>
+        <p>We're starting in Ulundi and expanding. More townships coming soon.</p>
+      </div>
+      <div class="townships-grid" id="townshipsGrid">
+        <!-- populated from SITE_CONFIG.TOWNSHIPS by app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo logo-light">
+          <span class="logo-mark">V</span><span>Ulundi<strong>Services</strong></span>
+        </a>
+        <p>Uplifting township businesses, one listing at a time.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="Facebook">📘</a>
+          <a href="#" aria-label="WhatsApp">💬</a>
+          <a href="#" aria-label="Instagram">📸</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <div>
+          <h4>Directory</h4>
+          <a href="#categories">Categories</a>
+          <a href="#businesses">Businesses</a>
+          <a href="#townships">Townships</a>
+        </div>
+        <div>
+          <h4>Business Owners</h4>
+          <a href="list-business.html">List Your Business</a>
+          <a href="request-special.html">Advertise a Special</a>
+        </div>
+        <div>
+          <h4>Info</h4>
+          <a href="#">About Ulundi Services</a>
+          <a href="#">Contact Us</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom container">
+      <p>© 2026 Ulundi Services · Built with ❤️ for South African townships</p>
+    </div>
+  </footer>
+
+  <!-- BUSINESS MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+  <div class="modal" id="businessModal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+
+  <!-- POPUP SPECIAL -->
+  <div id="popupSpecialWrap"></div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
