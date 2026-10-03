@@ -1,25 +1,15 @@
-/* ============================================================
-   ULUNDI SERVICES — ADMIN.JS (private approvals tool)
-   Credentials are kept only in this tab's sessionStorage — never
-   written to a file, never sent anywhere but your own WordPress site.
-   ============================================================ */
-
-let ADMIN_AUTH = null;
+let ADMIN_KEY = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.emailjs && SITE_CONFIG.EMAILJS_PUBLIC_KEY.indexOf('YOUR_') === -1) {
-    emailjs.init({ publicKey: SITE_CONFIG.EMAILJS_PUBLIC_KEY });
-  }
-  const saved = sessionStorage.getItem('ulsv_admin_auth');
-  if (saved) { ADMIN_AUTH = saved; showPanel(); }
+  const saved = sessionStorage.getItem('ulsv_admin_key');
+  if (saved) { ADMIN_KEY = saved; showPanel(); }
 });
 
 function adminLogin() {
-  const user = document.getElementById('adminUsername').value.trim();
-  const pass = document.getElementById('adminAppPassword').value.trim();
-  if (!user || !pass) return;
-  ADMIN_AUTH = btoa(`${user}:${pass}`);
-  sessionStorage.setItem('ulsv_admin_auth', ADMIN_AUTH);
+  const key = document.getElementById('adminKeyInput').value.trim();
+  if (!key) return;
+  ADMIN_KEY = key;
+  sessionStorage.setItem('ulsv_admin_key', ADMIN_KEY);
   showPanel();
 }
 
@@ -33,89 +23,55 @@ async function loadPending() {
   const list = document.getElementById('pendingList');
   list.innerHTML = '<p class="form-note">Loading…</p>';
   try {
-    const res = await fetch(`${SITE_CONFIG.WP_API_BASE}${SITE_CONFIG.BUSINESSES_ENDPOINT}?status=pending&per_page=50&context=edit`, {
-      headers: { Authorization: `Basic ${ADMIN_AUTH}` }
-    });
-    if (res.status === 401 || res.status === 403) {
-      sessionStorage.removeItem('ulsv_admin_auth');
+    const res = await fetch(`${SITE_CONFIG.WP_API_BASE}/ulundi/v1/pending-businesses?admin_key=${encodeURIComponent(ADMIN_KEY)}`);
+    if (res.status === 403) {
+      sessionStorage.removeItem('ulsv_admin_key');
       document.getElementById('adminPanel').style.display = 'none';
       document.getElementById('adminLogin').style.display = 'block';
-      alert('Login failed — check your username and Application Password.');
+      alert('Wrong admin key.');
       return;
     }
     const posts = await res.json();
     document.getElementById('pendingCount').textContent = `${posts.length} pending`;
-
-    if (!posts.length) {
-      list.innerHTML = '<p class="form-note">Nothing waiting for review 🎉</p>';
-      return;
-    }
-
+    if (!posts.length) { list.innerHTML = '<p class="form-note">Nothing waiting for review 🎉</p>'; return; }
     list.innerHTML = posts.map(p => {
       const acf = p.acf || {};
-      return `
-      <div class="admin-row" id="row-${p.id}">
-        <div>
-          <h3>${escHtml(p.title.rendered || p.title.raw)}</h3>
-          <div class="admin-meta">
-            ${acf.category_slug || ''} · ${acf.township_slug || ''}<br>
+      return `<div class="admin-row" id="row-${p.id}">
+        <div><h3>${escHtml(p.title)}</h3>
+          <div class="admin-meta">${acf.category_slug || ''} · ${acf.township_slug || ''}<br>
             📞 ${escHtml(acf.phone_number || '—')} · 📧 ${escHtml(acf.public_email || '—')}<br>
-            📍 ${escHtml(acf.business_address || '—')}
-          </div>
-        </div>
+            📍 ${escHtml(acf.business_address || '—')}</div></div>
         <div class="admin-actions">
           <button class="btn btn-outline" style="color:var(--red);border-color:var(--red)" onclick="rejectListing(${p.id})">Decline</button>
-          <button class="btn btn-solid" onclick="approveListing(${p.id}, '${escAttr(p.title.rendered || p.title.raw)}', '${escAttr(acf.public_email || '')}')">Approve &amp; Notify</button>
-        </div>
-      </div>`;
+          <button class="btn btn-solid" onclick="approveListing(${p.id})">Approve &amp; Notify</button>
+        </div></div>`;
     }).join('');
-  } catch (e) {
-    list.innerHTML = '<p class="form-note">Could not load pending listings.</p>';
-  }
+  } catch (e) { list.innerHTML = '<p class="form-note">Could not load pending listings.</p>'; }
 }
 
-async function approveListing(id, name, email) {
+async function approveListing(id) {
   const row = document.getElementById(`row-${id}`);
   row.style.opacity = '0.5';
   try {
-    const res = await fetch(`${SITE_CONFIG.WP_API_BASE}${SITE_CONFIG.BUSINESSES_ENDPOINT}/${id}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Basic ${ADMIN_AUTH}` },
-      body: JSON.stringify({ status: 'publish' })
+    const res = await fetch(`${SITE_CONFIG.WP_API_BASE}/ulundi/v1/approve-business/${id}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ admin_key: ADMIN_KEY })
     });
     if (!res.ok) throw new Error('Could not publish this listing.');
-    const post = await res.json();
-
-    if (email && window.emailjs && SITE_CONFIG.EMAILJS_PUBLIC_KEY.indexOf('YOUR_') === -1) {
-      try {
-        await emailjs.send(SITE_CONFIG.EMAILJS_SERVICE_ID, SITE_CONFIG.EMAILJS_TEMPLATE_APPROVED, {
-          to_email: email,
-          business_name: name,
-          listing_url: post.link,
-          declaration_text: ulsvDeclarationText(),
-        });
-      } catch (e) { console.warn('Approval email failed:', e); }
-    }
-    row.remove();
-  } catch (e) {
-    alert(e.message || 'Something went wrong.');
-    row.style.opacity = '1';
-  }
+    row.remove(); // WordPress sends the "you're live" email automatically now
+  } catch (e) { alert(e.message || 'Something went wrong.'); row.style.opacity = '1'; }
 }
 
 async function rejectListing(id) {
-  if (!confirm('Move this listing to Trash? The owner will not be notified automatically.')) return;
-  const row = document.getElementById(`row-${id}`);
+  if (!confirm('Move this listing to Trash?')) return;
   try {
-    const res = await fetch(`${SITE_CONFIG.WP_API_BASE}${SITE_CONFIG.BUSINESSES_ENDPOINT}/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Basic ${ADMIN_AUTH}` }
+    const res = await fetch(`${SITE_CONFIG.WP_API_BASE}/ulundi/v1/reject-business/${id}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ admin_key: ADMIN_KEY })
     });
     if (!res.ok) throw new Error('Could not remove this listing.');
-    row.remove();
-  } catch (e) {
-    alert(e.message || 'Something went wrong.');
-  }
+    document.getElementById(`row-${id}`).remove();
+  } catch (e) { alert(e.message || 'Something went wrong.'); }
 }
 
 function escHtml(str) {
@@ -124,4 +80,3 @@ function escHtml(str) {
   div.innerHTML = str;
   return (div.textContent || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
-function escAttr(str) { return String(str || '').replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }

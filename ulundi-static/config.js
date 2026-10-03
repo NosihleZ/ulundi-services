@@ -19,8 +19,11 @@ const SITE_CONFIG = {
   // every submission lands as "Pending" for you to review). Log in as that
   // user → Profile → Application Passwords → create one, then paste both
   // values below. See SETUP.md for the exact steps.
-  WP_SUBMIT_USERNAME: 'YOUR_CONTRIBUTOR_USERNAME',
-  WP_SUBMIT_APP_PASSWORD: 'YOUR_APPLICATION_PASSWORD',
+  //WP_SUBMIT_USERNAME: 'YOUR_CONTRIBUTOR_USERNAME',
+  //WP_SUBMIT_APP_PASSWORD: 'YOUR_APPLICATION_PASSWORD',
+
+  // Remove WP_SUBMIT_USERNAME and WP_SUBMIT_APP_PASSWORD, add instead:
+  ULSV_SUBMIT_KEY: '3_yMcMxo2fma1_ZGz_brJLW9', // must match ULSV_SUBMIT_KEY in the PHP snippet exactly
 
   // ---------- EmailJS (free, sends real email straight from the browser) ----------
   // Sign up free at https://www.emailjs.com — create a Service + two

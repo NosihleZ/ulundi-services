@@ -119,19 +119,18 @@ async function submitBusiness(e) {
 }
 
 async function createBusinessPost(data, featuredUrl, galleryUrls) {
-  // Requires a WordPress "Contributor" account's Application Password —
-  // see SETUP.md. Contributors can create posts but cannot publish them,
-  // so every submission lands as "Pending" until you review it.
-  if (SITE_CONFIG.WP_SUBMIT_USERNAME?.indexOf('YOUR_') !== -1 || !SITE_CONFIG.WP_SUBMIT_USERNAME) {
-    throw new Error('The website is not fully connected to WordPress yet (see SETUP.md → Application Password).');
+  // Submits to the custom "/ulundi/v1/submit-business" endpoint added via
+  // the Code Snippets plugin in wp-admin — a shared secret key (ULSV_SUBMIT_KEY)
+  // sent as a normal field, instead of an Authorization header. It only ever
+  // creates a PENDING post, so it's safe to keep in this public config.js.
+  if (!SITE_CONFIG.ULSV_SUBMIT_KEY || SITE_CONFIG.ULSV_SUBMIT_KEY.indexOf('YOUR_') !== -1 || SITE_CONFIG.ULSV_SUBMIT_KEY.indexOf('change-me') !== -1) {
+    throw new Error('The website is not fully connected to WordPress yet (see SETUP.md → ULSV_SUBMIT_KEY).');
   }
 
-  const auth = btoa(`${SITE_CONFIG.WP_SUBMIT_USERNAME}:${SITE_CONFIG.WP_SUBMIT_APP_PASSWORD}`);
-
   const body = {
+    api_key: SITE_CONFIG.ULSV_SUBMIT_KEY,
     title: data.name,
     content: data.description,
-    status: 'pending',
     acf: {
       category_slug: data.category,
       township_slug: data.township,
@@ -155,9 +154,9 @@ async function createBusinessPost(data, featuredUrl, galleryUrls) {
     }
   };
 
-  const res = await fetch(`${SITE_CONFIG.WP_API_BASE}${SITE_CONFIG.BUSINESSES_ENDPOINT}`, {
+  const res = await fetch(`${SITE_CONFIG.WP_API_BASE}/ulundi/v1/submit-business`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Basic ${auth}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
 
