@@ -36,8 +36,8 @@ const SITE_CONFIG = {
   // ---------- Cloudinary (free image hosting, direct from the browser) ----------
   // Sign up free at https://cloudinary.com → Settings → Upload →
   // add an "Unsigned" upload preset, then paste both values below.
-  CLOUDINARY_CLOUD_NAME: 'YOUR_CLOUD_NAME',
-  CLOUDINARY_UPLOAD_PRESET: 'YOUR_UPLOAD_PRESET',
+  CLOUDINARY_CLOUD_NAME: 'Ulundi-unsigned',
+  CLOUDINARY_UPLOAD_PRESET: 'sw3pdih0',
 
   // ---------- Free listing / paid listing declaration ----------
   FREE_LISTING_MONTHS: 'October and November 2026',
