@@ -56,6 +56,31 @@ async function submitSpecial(e) {
 
     const price = data.placement === 'banner' ? SITE_CONFIG.BANNER_PRICE : SITE_CONFIG.POPUP_PRICE;
 
+    // Save it to WordPress so it actually shows up under Specials & Ads —
+    // this step was missing before, which is why nothing appeared in wp-admin.
+    if (!SITE_CONFIG.ULSV_SUBMIT_KEY || SITE_CONFIG.ULSV_SUBMIT_KEY.indexOf('YOUR_') !== -1 || SITE_CONFIG.ULSV_SUBMIT_KEY.indexOf('change-me') !== -1) {
+      throw new Error('The website is not fully connected to WordPress yet (see SETUP.md → ULSV_SUBMIT_KEY).');
+    }
+    const res = await fetch(`${SITE_CONFIG.WP_API_BASE}/ulundi/v1/submit-special`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: SITE_CONFIG.ULSV_SUBMIT_KEY,
+        title: data.title,
+        business_name: data.business,
+        description: data.desc,
+        placement: data.placement,
+        image_url: imageUrl,
+        link: data.link,
+        start_date: data.start,
+        end_date: data.end,
+      })
+    });
+    if (!res.ok) {
+      console.error('WP error:', await res.text());
+      throw new Error('Could not save your special request — please try again.');
+    }
+
     if (window.emailjs && SITE_CONFIG.EMAILJS_PUBLIC_KEY.indexOf('YOUR_') === -1) {
       await emailjs.send(SITE_CONFIG.EMAILJS_SERVICE_ID, SITE_CONFIG.EMAILJS_TEMPLATE_SPECIAL_REQUEST, {
         to_email: SITE_CONFIG.ADMIN_EMAIL,

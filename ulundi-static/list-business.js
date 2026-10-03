@@ -123,35 +123,34 @@ async function createBusinessPost(data, featuredUrl, galleryUrls) {
   // the Code Snippets plugin in wp-admin — a shared secret key (ULSV_SUBMIT_KEY)
   // sent as a normal field, instead of an Authorization header. It only ever
   // creates a PENDING post, so it's safe to keep in this public config.js.
+  // NOTE: the fields below are sent FLAT (no "acf" wrapper) — this must match
+  // how ulsv_submit_business() in the WordPress snippet reads $req->get_param(...).
   if (!SITE_CONFIG.ULSV_SUBMIT_KEY || SITE_CONFIG.ULSV_SUBMIT_KEY.indexOf('YOUR_') !== -1 || SITE_CONFIG.ULSV_SUBMIT_KEY.indexOf('change-me') !== -1) {
     throw new Error('The website is not fully connected to WordPress yet (see SETUP.md → ULSV_SUBMIT_KEY).');
   }
 
   const body = {
     api_key: SITE_CONFIG.ULSV_SUBMIT_KEY,
-    title: data.name,
-    content: data.description,
-    acf: {
-      category_slug: data.category,
-      township_slug: data.township,
-      business_address: data.address,
-      phone_number: data.phone,
-      whatsapp_number: data.whatsapp,
-      public_email: data.email,
-      operating_hours: data.hours,
-      map_embed_url: data.map_embed,
-      website_1: data.website1,
-      website_2: data.website2,
-      facebook_url: data.facebook,
-      instagram_url: data.instagram,
-      tiktok_url: data.tiktok,
-      youtube_video: data.youtube,
-      vimeo_video: data.vimeo,
-      owner_name: data.owner_name,
-      featured_image_url: featuredUrl,
-      gallery_urls: galleryUrls.join(','),
-      declaration_accepted: true,
-    }
+    name: data.name,
+    description: data.description,
+    category: data.category,
+    township: data.township,
+    address: data.address,
+    phone: data.phone,
+    whatsapp: data.whatsapp,
+    email: data.email,
+    hours: data.hours,
+    map_embed: data.map_embed,
+    website1: data.website1,
+    website2: data.website2,
+    facebook: data.facebook,
+    instagram: data.instagram,
+    tiktok: data.tiktok,
+    youtube: data.youtube,
+    vimeo: data.vimeo,
+    owner_name: data.owner_name,
+    featured_image_url: featuredUrl,
+    gallery_urls: galleryUrls.join(','),
   };
 
   const res = await fetch(`${SITE_CONFIG.WP_API_BASE}/ulundi/v1/submit-business`, {
